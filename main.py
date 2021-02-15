@@ -1,22 +1,28 @@
 from wsgiref import simple_server
 from flask import Flask, request
 from flask import Response
-import os
+import os, boto3
 from flask_cors import CORS, cross_origin
 from prediction_Validation_Insertion import pred_validation
 from trainingModel import trainModel
 from training_Validation_Insertion import train_validation
 import flask_monitoringdashboard as dashboard
 from predictFromModel import prediction
+from datetime import datetime
 
 os.putenv('LANG', 'en_US.UTF-8')
 os.putenv('LC_ALL', 'en_US.UTF-8')
+
+AWS_KEY = 'AKIAQLOZZIL6MBH75FFI'
+AWS_SECRET = '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'
 
 app = Flask(__name__)
 dashboard.bind(app)
 CORS(app)
 
-
+s3= boto3.client('s3',aws_access_key_id= 'AKIAQLOZZIL6MBH75FFI',
+                aws_secret_access_key= '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',
+                region_name='us-east-2')
 
 @app.route("/predict", methods=['POST'])
 @cross_origin()
@@ -33,6 +39,7 @@ def predictRouteClient():
 
             # predicting for dataset present in database
             path = pred.predictionFromModel()
+            s3.upload_file(Filename=path, Bucket='wafer-123', Key=f'Prediction_Output_File/Predictions-{datetime.now()}.csv')
             return Response("Prediction File created at %s!!!" % path)
 
     except ValueError:
