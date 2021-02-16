@@ -13,15 +13,13 @@ from datetime import datetime
 os.putenv('LANG', 'en_US.UTF-8')
 os.putenv('LC_ALL', 'en_US.UTF-8')
 
-AWS_KEY = 'AKIAQLOZZIL6MBH75FFI'
-AWS_SECRET = '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'
 
 app = Flask(__name__)
 dashboard.bind(app)
 CORS(app)
 
-s3= boto3.client('s3',aws_access_key_id= 'AKIAQLOZZIL6MBH75FFI',
-                aws_secret_access_key= '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',
+s3= boto3.client('s3',aws_access_key_id= ID,
+                aws_secret_access_key= PASS,
                 region_name='us-east-2')
 
 @app.route("/predict", methods=['POST'])
